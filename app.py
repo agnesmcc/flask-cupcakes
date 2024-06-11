@@ -29,7 +29,22 @@ def get_cupcakes():
         return response
 
 
-@app.route('/api/cupcakes/<int:cupcake_id>', methods=['GET'])
+@app.route('/api/cupcakes/<int:cupcake_id>', methods=['GET', 'PATCH', 'DELETE'])
 def get_cupcake(cupcake_id):
-    cupcake = Cupcake.query.get_or_404(cupcake_id)
-    return jsonify(cupcake=cupcake.serialize())
+    if request.method == 'GET':
+        cupcake = Cupcake.query.get_or_404(cupcake_id)
+        return jsonify(cupcake=cupcake.serialize())
+    elif request.method == 'PATCH':
+        cupcake = Cupcake.query.get_or_404(cupcake_id)
+        cupcake.flavor = request.json['flavor']
+        cupcake.size = request.json['size']
+        cupcake.rating = request.json['rating']
+        cupcake.image = request.json['image']
+        db.session.add(cupcake)
+        db.session.commit()
+        return jsonify(cupcake=cupcake.serialize())
+    elif request.method == 'DELETE':
+        cupcake = Cupcake.query.get_or_404(cupcake_id)
+        db.session.delete(cupcake)
+        db.session.commit()
+        return jsonify(message="Deleted")

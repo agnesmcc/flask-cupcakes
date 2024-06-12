@@ -12,6 +12,10 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 connect_db(app)
 
+@app.route('/')
+def home_page():
+    return render_template('home.html')
+
 @app.route('/api/cupcakes', methods=['GET', 'POST'])
 def get_cupcakes():
     if request.method == 'GET':
